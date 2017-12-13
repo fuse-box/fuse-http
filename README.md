@@ -2,6 +2,16 @@
 
 FuseHTTP is a lightweight HTTP server implementation based on express with simplicity in mind.
 
+```ts
+import { Route } from 'fuse-http';
+@Route("/")
+export class MainRoute {
+    public async get(req) {
+        return "hello world";
+    }
+}
+```
+
 ## Key features
 
 * Simple setup
@@ -139,4 +149,23 @@ Here FuseBox magically resolved the first parameter, evaluated `inject` method.
 
 
  `inject` method is resolved accordingly, respecting other injections recursively. So you can inject `req` `res` or `next` injections too.
+
+## Error handlers
+
+A handler must have `test` method, where we test if that particular exception should be processed. For example, here is `BaseHandler`
+
+```ts
+@ErrorHandler()
+export class ErrorBaseHandler {
+    public express : ExpressData;
+    public test(e){
+        const res = this.express.res;
+        if ( e instanceof ErrorNotFound){
+            res.status(404).send({code : 404, message : e.message})
+        }
+    }
+}
+```
+
+
 
