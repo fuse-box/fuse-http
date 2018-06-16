@@ -1,6 +1,6 @@
 {
   "name": "fuse-http",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "description": "",
   "main": "./es6.js",
   "ts:main": "index.ts",

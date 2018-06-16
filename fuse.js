@@ -23,7 +23,7 @@ task("dist", async context => {
 });
 
 task("publish", async () => {
-    exec("dist")
+    await exec("dist")
     await npmPublish({path : "dist"});
 })
 
@@ -84,7 +84,3 @@ context(class {
         return fuse.run();
     }
 });
-
-// process.on('unhandledRejection', (reason, promise) => {
-//     console.error(`Uncaught error in`, reason);
-//   });

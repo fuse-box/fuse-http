@@ -49,8 +49,28 @@ export class RouteCollection {
     public static collection = new Set<RouteDescriptor>();
     public static injectors = new Map<string, RouteInjector>();
     public static errorHandlers = new Set<RouteErrorHandler>();
+
     public static register(Target: any, path: any) {
+
+        //console.log(Target.id = 1);
         this.collection.add(new RouteDescriptor(path, Target));
+    }
+
+    public static registerDecorator(Target, key, descriptor, handler, userArgs) {
+        const _prop = "$propertyDecorators";
+        if ( !Target[_prop]){
+            Object.defineProperty(Target, _prop, {
+                value : {}, enumerable : false
+            });
+        }
+        const storage = Target[_prop];
+        storage[key] = storage[key] || [];
+        const methodDecorators = storage[key]
+        methodDecorators.push({
+            handler : handler,
+            args : userArgs
+        });
+        return descriptor;
     }
 
     public static registerInjector(name: string, Target: any) {

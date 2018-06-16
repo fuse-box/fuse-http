@@ -15,7 +15,14 @@ export class RouteConstructor {
             return await this.construct(Injector.Target, "inject")
         }
     }
-
+    private async evalMethod(instance, method){
+        const params = utils.getParameterNamesFromFunction(method);
+        const constructedParams = [];
+        for (const param of params) {
+            constructedParams.push(await this.getInjection(param));
+        }
+        return await method.apply(instance, constructedParams);
+    }
     private async construct(Target: any, name: string) {
         const instance = new Target();
         instance.express = this.data;
@@ -23,11 +30,18 @@ export class RouteConstructor {
         if (typeof method !== "function") {
             return;
         }
-        const params = utils.getParameterNamesFromFunction(method);
-        const constructedParams = [];
-        for (const param of params) {
-            constructedParams.push(await this.getInjection(param));
+        const _prop = "$propertyDecorators";
+        const propertyDecorators = instance.constructor.prototype[_prop];
+        if(propertyDecorators){
+            if( propertyDecorators[name] ){
+                for (const item of propertyDecorators[name]) {
+                    const handleInstance = new item.handler();
+                    if( typeof handleInstance["init"] === "function"){
+                        await this.evalMethod(handleInstance, handleInstance["init"]);
+                    }
+                }
+            }
         }
-        return await method.apply(instance, constructedParams);
+        return this.evalMethod(instance, method);
     }
 }

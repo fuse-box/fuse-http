@@ -10,7 +10,6 @@ export class RouteHandler {
     public async request(data: ExpressData) {
         const reqMethod = data.req.method.toLowerCase();
         const Target = this.descriptor.Target;
-        const instance = new Target();
         const method = this.descriptor.getMethod(reqMethod);
         if (method) {
             const routeContructor = new RouteConstructor(method, data);
@@ -26,7 +25,8 @@ export class RouteHandler {
                     }
                 }
                 console.error(e);
-                return data.res.send({error : e.message})
+                data.res.status(500);
+                return data.res.send({error : e.message || e})
             }
         }
     }

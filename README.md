@@ -150,6 +150,38 @@ Here FuseBox magically resolved the first parameter, evaluated `inject` method.
 
  `inject` method is resolved accordingly, respecting other injections recursively. So you can inject `req` `res` or `next` injections too.
 
+
+## Decorators
+
+Define your decorator by providing a class with init function to a wrapper `MethodDecorator`
+
+```ts
+import { MethodDecorator } from "fuse-http";
+
+export const Permissions = MethodDecorator<string>(class {
+    init(req) {
+       if (!req.query.foobar){
+           throw { message : "Foobar must be there" }
+       }
+    }
+})
+```
+`init` will be constucted with all your injections including `req` and `res` from `express`
+
+
+Usage in route
+
+```ts
+@Route("/")
+class TestRoute {
+
+    @Permissions("sdf")
+    public async get() {
+      return {ok : true};
+    }
+}
+```
+
 ## Error handlers
 
 A handler must have `test` method, where we test if that particular exception should be processed. For example, here is `BaseHandler`

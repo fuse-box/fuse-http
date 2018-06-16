@@ -1,5 +1,6 @@
 import * as express from "express";
 import { RouteDispatcher } from './RouteDispatcher';
+import * as bodyParser from "body-parser";
 
 export interface ServerOptions {
     port?: number;
@@ -14,9 +15,14 @@ export class Server {
         setTimeout(() => { this.launch(); }, 0);
     }
 
+    public static(path: string, folder: string) {
+        this.app.use(path, express.static(folder))
+    }
+
     private launch() {
         const port = this.opts.port || process.env.PORT || 3000;
         this.dispatcher.setup();
+        this.app.use(bodyParser.json());
         this.app.listen(
             this.opts.port || process.env.PORT || 3000, () =>
                 console.log(`FuseHTTP app listening on port ${port}!`))
