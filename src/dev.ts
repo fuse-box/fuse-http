@@ -28,12 +28,9 @@ const Permissions = MethodDecorator<{value : string}, string>(class {
     }
 })
 
-const FooBar = MethodDecorator(class {
-    init(req) {
-        console.log("her")
-        if(!req.query.number){
-            throw {o :"number must be here"}
-        }
+const FooBar = MethodDecorator<string>(class {
+    init(args) {
+    console.log("my args", args);
     }
 })
 
@@ -42,7 +39,7 @@ const FooBar = MethodDecorator(class {
 class TestRoute {
 
     @Permissions({pukka: "sukka"}, "sdf")
-    @FooBar()
+    @FooBar("kakka")
     public async get(foo: Foo) {
 
         //throw new ErrorNotFound("oi oi")

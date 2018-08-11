@@ -15,11 +15,15 @@ export class RouteConstructor {
             return await this.construct(Injector.Target, "inject")
         }
     }
-    private async evalMethod(instance, method){
+    private async evalMethod(instance, method, locals?){
         const params = utils.getParameterNamesFromFunction(method);
         const constructedParams = [];
         for (const param of params) {
-            constructedParams.push(await this.getInjection(param));
+            if(locals && locals[param]){
+                constructedParams.push(locals[param]);    
+            } else {
+                constructedParams.push(await this.getInjection(param));
+            }
         }
         return await method.apply(instance, constructedParams);
     }
@@ -36,8 +40,11 @@ export class RouteConstructor {
             if( propertyDecorators[name] ){
                 for (const item of propertyDecorators[name]) {
                     const handleInstance = new item.handler();
+                    
                     if( typeof handleInstance["init"] === "function"){
-                        await this.evalMethod(handleInstance, handleInstance["init"]);
+                        await this.evalMethod(handleInstance, handleInstance["init"], {
+                            args  : item.args
+                        });
                     }
                 }
             }
