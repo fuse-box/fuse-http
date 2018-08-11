@@ -22,6 +22,7 @@ export class Server {
     private launch() {
         const port = this.opts.port || process.env.PORT || 3000;
         this.dispatcher.setup();
+        this.app.use(bodyParser.urlencoded({ extended: false }))
         this.app.use(bodyParser.json());
         this.app.listen(
             this.opts.port || process.env.PORT || 3000, () =>
